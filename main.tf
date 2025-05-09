@@ -128,7 +128,7 @@ resource "google_compute_disk" "root" {
     vm_name = "coder-${lower(data.coder_workspace_owner.me.name)}-${lower(data.coder_workspace.me.name)}-vm"
     coder_provisioned = "true"
     environment = "cdw-prod"
-    usecase = "helix-labeling-engineering"
+    usecase = "engineering"
     username = "${lower(data.coder_workspace_owner.me.name)}"
     templatename = "${data.coder_workspace.me.template_name}"
   }
@@ -186,18 +186,6 @@ resource "coder_app" "code-server" {
   }
 }
 
-
-### Deprecated in lieu of KasmVNC
-#### resource "coder_app" "no-vnc" {
-##   agent_id     = coder_agent.main.id
-##   slug         = "no-vnc"
-##   display_name = "Tiger VNC"
-##   icon         = "/icon/novnc.svg"
-##   #url          = "http://localhost:6080/vnc.html${local.vnc_url_path}?username=${local.linux_user}&password=${local.linux_user}"
-##   url          = "http://localhost:6080/vnc.html"
-##   subdomain    = false
-## }
-
 resource "google_compute_instance" "dev" {
   zone         = data.coder_parameter.zone.value
   depends_on =[
@@ -227,8 +215,8 @@ resource "google_compute_instance" "dev" {
   labels = {
     name = "coder-${lower(data.coder_workspace_owner.me.name)}-${lower(data.coder_workspace.me.name)}-vm"
     coder_provisioned = "true"
-    environment = "cdw-prod"
-    usecase = "helix-labeling-engineering"
+    environment = "prod"
+    usecase = "engineering"
     username = "${lower(data.coder_workspace_owner.me.name)}"
     templatename = "${data.coder_workspace.me.template_name}"
   }
@@ -257,7 +245,7 @@ apt update
 apt install -y docker docker.io libdatetime-perl xfce4 xfce4-goodies
 #sudo groupadd -f docker
 
-#linking gcp reslov.conf with ubuntu reslov.conf , to reslove the connection reset by peer issue 
+#linking gcp resolv.conf with ubuntu reslov.conf , to resolve the connection reset by peer issue 
 sudo ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
 
 # sed -i 's/^owner.*/owner = "${local.linux_user}"/' /etc/dcv/dcv.conf
@@ -298,31 +286,6 @@ fi
 # sudo -u $LINUX_USER vncserver :1 -geometry 1280x1024 -depth 24
 
 # nohup /usr/share/novnc/utils/launch.sh --vnc localhost:5901 &
-
-#Install Crowdstrike
-# gsutil -m cp -r gs://cdw-adas-data-backup-bucket/poonacc/* /opt
-# sudo dpkg -i /opt/falcon-sensor_7.10.0-16303_amd64.deb
-# CID=$(gcloud secrets versions access latest --secret=crowdstrike-cid)
-
-## Check if the symbolic link exists before creating it
-#if [ ! -L /usr/local/bin/falconctl ]; then
-#    sudo ln -s /opt/CrowdStrike/falconctl /usr/local/bin/falconctl
-#fi
-
-# Configure CrowdStrike
-#sudo falconctl -s --cid="$CID" -f
-#sudo falconctl -s --tags="CDW_Cloud,CDW_Cloud_GCP_LIN_PROD" -f
-#sudo systemctl restart falcon-sensor
-
-# Check if falcon-sensor is running
-#ps -e | grep falcon-sensor
-
-# mounting bucket at /data/data_buckets
-#bucket_name="cdw-adas-data-backup-bucket"
-#echo $bucket_name
-#sudo mkdir -p "/data/data-buckets/$bucket_name"
-#echo "directorcreation"
-#sudo /usr/bin/gcsfuse -o allow_other --implicit-dirs $bucket_name /data/data-buckets/$bucket_name
 
 echo "${local.linux_user}:${local.linux_user}" | chpasswd
 
