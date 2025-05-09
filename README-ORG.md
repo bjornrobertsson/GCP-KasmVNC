@@ -1,5 +1,5 @@
 ---
-display_name: Kubernetes (Deployment)
+display_name: Kubernetes (GCP Deployment)
 description: Provision Kubernetes Deployments as Coder workspaces
 icon: ../../../site/static/icon/k8s.png
 maintainer_github: coder
@@ -17,9 +17,9 @@ Provision Kubernetes Pods as [Coder workspaces](https://coder.com/docs/workspace
 
 ### Infrastructure
 
-**Cluster**: This template requires an existing Kubernetes cluster
+**Cluster**: This template requires an existing Kubernetes cluster and assumes GCP.
 
-**Container Image**: This template uses the [codercom/enterprise-base:ubuntu image](https://github.com/coder/enterprise-images/tree/main/images/base) with some dev tools preinstalled. To add additional tools, extend this image or build it yourself.
+**Container Image**: This template uses the Debian 12 as base. To add additional tools, extend this image or build it yourself.
 
 ### Authentication
 
